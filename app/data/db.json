@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": 1, "title": "Groceries", "amount": 1200 },
+    { "id": 2, "title": "Internet", "amount": 800 }
+  ]
+}
