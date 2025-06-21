@@ -1,15 +1,14 @@
-// layouts/RootLayout.tsx
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AppBar } from './components/common/appbar';
-import HomeScreen from './screens/HomeScreen';
-import SettingsScreen from './screens/SettingScreen';
-import { TransactionsScreen } from './screens/TransactionsScreen';
-import ExpenseScreen from './screens/ExpenseScreen';
-import { Navbar } from './components/common/navbar';
+import { AppBar } from '../components/common/appbar';
+import HomeScreen from '../screens/HomeScreen';
+import SettingsScreen from '../screens/SettingScreen';
+import { TransactionsScreen } from '../screens/TransactionsScreen';
+import ExpenseScreen from '../screens/ExpenseScreen';
+import { Navbar } from '../components/common/navbar';
 
 const Tab = createBottomTabNavigator();
 
-export default function RootLayout() {
+export default function NavManager() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
