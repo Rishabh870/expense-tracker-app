@@ -1,76 +1,56 @@
-import { Box } from '@/components/ui/box';
 import { Card } from '@/components/ui/card';
-import { Heading } from '@/components/ui/heading';
 import { HStack } from '@/components/ui/hstack';
-import { AlertCircleIcon, Icon, MailIcon } from '@/components/ui/icon';
-import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { StyleSheet } from 'react-native';
+import { Box } from '@/components/ui/box';
+import { Heading } from '@/components/ui/heading';
+import { Text } from '@/components/ui/text';
+import { Icon, MailIcon } from '@/components/ui/icon';
+import * as TablerIcon from '@tabler/icons-react-native';
 
-type Props = {
-  icon: string;
+interface Props {
+  icon: keyof typeof TablerIcon;
   iconBg: string;
   category: string;
   description: string;
   amount: number;
-};
+}
 
-const CategoryCard = ({
-  // icon,
+export const CategoryCard = ({
+  icon,
   iconBg,
   category,
   description,
   amount,
 }: Props) => {
+  const DynamicIcon = TablerIcon[
+    icon as keyof typeof TablerIcon
+  ] as React.ComponentType<any>;
+
   return (
-    <Card size='md' variant='filled'>
-      <HStack space='md'>
+    <Card size='md' variant='filled' className='mx-3 my-2 px-3 py-3 rounded-lg'>
+      <HStack space='md' className='text-center items-center'>
         {/* Left: Icon */}
-        <Box style={[styles.iconBox, { backgroundColor: iconBg }]}>
-          <Icon as={MailIcon} size='md' color='#fff' />
+        <Box
+          className='w-12 h-12 rounded-md items-center justify-center'
+          style={{ backgroundColor: iconBg }}>
+          <DynamicIcon size={24} color='#fff' />
         </Box>
 
         {/* Middle: Text Info */}
-        <VStack style={styles.textBlock}>
-          <Heading size='sm' style={styles.heading}>
+        <VStack className='flex-1 ml-3'>
+          <Heading size='sm' className='mb-0.5'>
             {category}
           </Heading>
-          <Text size='xs' style={styles.subtext}>
+          <Text size='xs' className='text-muted-500'>
             {description}
           </Text>
         </VStack>
 
         {/* Right: Amount */}
-        <Text size='sm' bold style={styles.amount}>
+        <Text size='sm' bold className='text-textDark-900'>
           ₹{amount}
         </Text>
       </HStack>
     </Card>
   );
 };
-
-const styles = StyleSheet.create({
-  iconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textBlock: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  heading: {
-    marginBottom: 2,
-  },
-  subtext: {
-    color: '#6B7280', // text-muted-500 (gray-500)
-  },
-  amount: {
-    color: '#111827', // textDark-900 (gray-900)
-    fontWeight: 'bold',
-  },
-});
-
-export default CategoryCard;

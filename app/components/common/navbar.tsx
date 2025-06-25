@@ -13,6 +13,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useDialogStore } from '@/app/store/useDialogStore';
 import { useBreakpoint } from '@/app/utils/useBreakpoint';
 import { colors } from '@/app/constants/theme';
+import { Box } from '@/components/ui/box';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const Navbar = ({
   state,
@@ -49,7 +51,7 @@ export const Navbar = ({
         <Ionicons
           name={iconName}
           size={24}
-          color={isFocused ? '#1e40af' : '#999'}
+          color={isFocused ? colors.primary : '#999'}
         />
       </TouchableOpacity>
     );
@@ -71,29 +73,38 @@ export const Navbar = ({
   };
 
   return (
-    <View style={[styles.container, isLandscape && styles.landscapeContainer]}>
-      {/* Left tabs: Home, Transactions */}
-      {renderTab(state.routes[0], 0)}
-      {renderTab(state.routes[1], 1)}
+    <SafeAreaView style={styles.safe} edges={['bottom']}>
+      <Box style={[styles.container, isLandscape && styles.landscapeContainer]}>
+        {/* Left tabs: Home, Transactions */}
+        {renderTab(state.routes[0], 0)}
+        {renderTab(state.routes[1], 1)}
 
-      {/* Center Add Button */}
-      <View style={{ width: tabWidth, alignItems: 'center' }}>
-        <TouchableOpacity
-          onPress={() => useDialogStore.getState().openDialog('add')}
-          style={styles.addButton}
-          activeOpacity={0.8}>
-          <Ionicons name='add' size={30} color='#fff' />
-        </TouchableOpacity>
-      </View>
+        {/* Center Add Button */}
+        <View style={{ width: tabWidth, alignItems: 'center' }}>
+          <TouchableOpacity
+            onPress={() => useDialogStore.getState().openDialog('add')}
+            style={styles.addButton}
+            activeOpacity={0.8}>
+            <Ionicons name='add' size={30} color='#fff' />
+          </TouchableOpacity>
+        </View>
 
-      {/* Right tabs: Expense, Settings */}
-      {renderTab(state.routes[2], 2)}
-      {renderTab(state.routes[3], 3)}
-    </View>
+        {/* Right tabs: Expense, Settings */}
+        {renderTab(state.routes[2], 2)}
+        {renderTab(state.routes[3], 3)}
+      </Box>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safe: {
+    padding: 0,
+    margin: 0,
+    top: 0,
+    bottom: 0,
+    backgroundColor: 'black', // or your theme background
+  },
   container: {
     flexDirection: 'row',
     height: 64,
@@ -103,10 +114,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 4,
-    marginBottom: 48,
   },
   landscapeContainer: {
-    height: 52,
+    height: 60,
   },
   tabButton: {
     alignItems: 'center',

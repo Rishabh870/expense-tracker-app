@@ -2,11 +2,12 @@
 
 import { Box } from '@/components/ui/box';
 import { Text } from '@/components/ui/text';
+import { SafeAreaView } from 'react-native';
 
 export default function SettingScreen() {
   return (
-    <Box>
+    <SafeAreaView>
       <Text>Setting Screen</Text>
-    </Box>
+    </SafeAreaView>
   );
 }

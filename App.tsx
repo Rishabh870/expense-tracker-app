@@ -3,22 +3,36 @@ import { GluestackUIProvider } from '@/components/ui/gluestack-ui-provider';
 
 import { NavigationContainer } from '@react-navigation/native';
 import NavManager from './app/utils/navManager';
-import { View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, View } from 'react-native';
 import { DialogManager } from './app/utils/dialogManager';
 import AuthStack from './app/utils/authManager';
 import { useAuthStore } from './app/store/useAuthStore';
+import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export default function App() {
-  const { user } = useAuthStore();
+  const { user, hasHydrated, loadUserFromStorage } = useAuthStore();
+
+  useEffect(() => {
+    loadUserFromStorage();
+  }, []);
+
+  if (!hasHydrated) {
+    return (
+      <View className='flex-1 justify-center items-center bg-white'>
+        <ActivityIndicator size='large' color='#1e40af' />
+      </View>
+    );
+  }
   return (
     <GluestackUIProvider mode='light'>
-      <View className='h-full w-full'>
+      <SafeAreaProvider>
         <NavigationContainer>
           {user ? <NavManager /> : <AuthStack />}
           {/* <NavManager /> */}
           <DialogManager />
         </NavigationContainer>
-      </View>
+      </SafeAreaProvider>
     </GluestackUIProvider>
   );
 }

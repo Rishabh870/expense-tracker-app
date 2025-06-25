@@ -1,6 +1,6 @@
 // theme/colors.ts
 export const colors = {
-  primary: '#1e40af', // Tailwind blue-800
+  primary: '#AD40AF', // Tailwind blue-800
   secondary: '#3b82f6', // Tailwind blue-500
   background: '#ffffff',
   surface: '#f5f5f5',

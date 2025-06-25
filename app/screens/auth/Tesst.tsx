@@ -1,59 +1,43 @@
+import React, { useState } from 'react';
 import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelText,
-  FormControlHelper,
-  FormControlHelperText,
-  FormControlError,
-  FormControlErrorText,
-  FormControlErrorIcon,
-} from '@/components/ui/form-control';
-import { Box } from '@/components/ui/box';
-import { VStack } from '@/components/ui/vstack';
-import { Button } from '@/components/ui/button';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
-import { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Pressable } from 'react-native';
-import { AlertCircleIcon } from '@/components/ui/icon';
-import { useAuthStore } from '@/app/store/useAuthStore';
-
-import { SafeAreaView, ScrollView, View, TouchableOpacity } from 'react-native';
+  SafeAreaView,
+  ScrollView,
+  View,
+  Text,
+  TouchableOpacity,
+} from 'react-native';
 
 import GoogleSVG from '../../../assets/images/google.svg';
 import InputField from '@/app/components/ui/input';
 
 import { IconLock, IconMail, IconUser } from '@tabler/icons-react-native';
-
+import { useNavigation } from '@react-navigation/native';
 import CustomButton from '@/app/components/ui/authButton';
 import { colors } from '@/app/constants/theme';
 
-export default function SignupScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const RegisterScreen = () => {
   const navigation = useNavigation();
+  const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const { signup } = useAuthStore();
-
-  const isEmailInvalid = email.trim() === '' || !email.includes('@');
-  const isPasswordInvalid = password.trim().length < 6;
-
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: 'center' }}>
       <View className='justify-center' style={{ paddingHorizontal: 25 }}>
         <Text
           style={{
+            fontFamily: 'Roboto-Medium',
+            fontSize: 28,
+            fontWeight: '600',
             color: colors.primary,
-          }}
-          className="font-medium text-2xl text-[#333] mb-8 font-['Roboto-Medium']">
+            marginBottom: 30,
+          }}>
           Register
         </Text>
 
         <InputField
           label={'Full Name'}
-          icon={<IconUser size={20} color='#666' style={{ marginRight: 5 }} />}
+          icon={<IconUser />}
           value={name}
           onChangeText={setName}
         />
@@ -82,16 +66,7 @@ export default function SignupScreen() {
           onChangeText={setConfirmPassword}
         />
 
-        <CustomButton
-          label={'Register'}
-          onPress={() => {
-            if (confirmPassword === password) {
-              signup(name, email, password);
-            } else {
-              console.log('password doesnt match');
-            }
-          }}
-        />
+        <CustomButton label={'Register'} onPress={() => {}} />
 
         <View
           style={{
@@ -100,8 +75,7 @@ export default function SignupScreen() {
             marginBottom: 30,
           }}>
           <Text>Already registered?</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('LoginScreen' as never)}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={{ color: colors.primary, fontWeight: '700' }}>
               {' '}
               Login
@@ -134,4 +108,6 @@ export default function SignupScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default RegisterScreen;

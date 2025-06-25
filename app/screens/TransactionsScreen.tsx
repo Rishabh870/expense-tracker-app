@@ -1,13 +1,14 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import CategoryCard from '../components/common/card';
+import { CategoryCard } from '../components/common/card';
+import * as TablerIcon from '@tabler/icons-react-native';
 
 const transactionData = [
   {
     id: '1',
     category: 'Groceries',
     description: 'Bought fruits and vegetables',
-    icon: 'cart',
+    icon: 'IconBasketFilled',
     iconBg: '#60A5FA',
     amount: 1200,
   },
@@ -15,7 +16,7 @@ const transactionData = [
     id: '2',
     category: 'Dining',
     description: 'Lunch with friends',
-    icon: 'restaurant',
+    icon: 'IconToolsKitchen2',
     iconBg: '#F472B6',
     amount: 900,
   },
@@ -24,13 +25,13 @@ const transactionData = [
 
 export const TransactionsScreen = () => {
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} className='bg-slate-200'>
       {transactionData.map((item) => (
         <CategoryCard
           key={item.id}
           category={item.category}
           description={item.description}
-          icon={item.icon}
+          icon={item.icon as keyof typeof TablerIcon}
           iconBg={item.iconBg}
           amount={item.amount}
         />

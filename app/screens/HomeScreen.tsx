@@ -1,20 +1,18 @@
 // screens/HomeScreen.tsx
 
 import { Box } from '@/components/ui/box';
-import { Text } from '@/components/ui/text';
-import { useAppStore } from '../store/useAppStore';
+import { Button, ButtonText } from '@/components/ui/button';
+import { useAuthStore } from '../store/useAuthStore';
+import { SafeAreaView } from 'react-native';
 
 export default function HomeScreen() {
-  const items = useAppStore((state) => state.items);
+  const { logout } = useAuthStore();
 
   return (
-    <Box>
-      {items.map((item) => (
-        <Box key={item.id}>
-          <Text size='lg'>{item.title}</Text>
-          <Text size='md'>₹{item.amount}</Text>
-        </Box>
-      ))}
-    </Box>
+    <SafeAreaView className='w-1/4'>
+      <Button onPress={logout}>
+        <ButtonText>Logout</ButtonText>
+      </Button>
+    </SafeAreaView>
   );
 }

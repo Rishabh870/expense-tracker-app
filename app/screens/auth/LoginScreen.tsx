@@ -1,21 +1,19 @@
+import React from 'react';
 import {
-  FormControl,
-  FormControlLabel,
-  FormControlLabelText,
-  FormControlHelper,
-  FormControlHelperText,
-  FormControlError,
-  FormControlErrorText,
-  FormControlErrorIcon,
-} from '@/components/ui/form-control';
-import { Box } from '@/components/ui/box';
-import { VStack } from '@/components/ui/vstack';
-import { Input, InputField } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
-import { useState } from 'react';
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
+
+import InputField from '@/app/components/ui/input';
+import CustomButton from '@/app/components/ui/authButton';
 import { useNavigation } from '@react-navigation/native';
+import GoogleSVG from '../../../assets/images/google.svg';
+import { IconLock, IconMail, IconPassword } from '@tabler/icons-react-native';
+import { colors } from '@/app/constants/theme';
+import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { AlertCircleIcon } from '@/components/ui/icon';
 import { useAuthStore } from '@/app/store/useAuthStore';
@@ -30,79 +28,64 @@ export default function LoginScreen() {
   const isPasswordInvalid = password.trim().length < 6;
 
   return (
-    <Box style={styles.container}>
-      <VStack space='lg' style={styles.formBox}>
-        <Heading size='xl' style={styles.heading}>
+    <SafeAreaView className='flex-1 justify-center bg-white'>
+      <View className='px-6'>
+        <Text
+          style={{
+            color: colors.primary,
+          }}
+          className="font-medium text-2xl text-[#333] mb-8 font-['Roboto-Medium']">
           Login
-        </Heading>
+        </Text>
 
-        {/* Email Field */}
-        <FormControl isInvalid={isEmailInvalid} isRequired>
-          <FormControlLabel>
-            <FormControlLabelText>Email</FormControlLabelText>
-          </FormControlLabel>
+        <InputField
+          label='Email ID'
+          icon={<IconMail size={20} color='#666' style={{ marginRight: 5 }} />}
+          keyboardType='email-address'
+          value={email}
+          onChangeText={setEmail}
+        />
 
-          <Input>
-            <InputField
-              value={email}
-              onChangeText={setEmail}
-              keyboardType='email-address'
-              placeholder='example@email.com'
-              autoCapitalize='none'
-            />
-          </Input>
+        <InputField
+          label='Password'
+          inputType='password'
+          icon={<IconLock size={20} color='#666' style={{ marginRight: 5 }} />}
+          fieldButtonLabel='Forgot?'
+          fieldButtonFunction={() => {}}
+          value={password}
+          onChangeText={setPassword}
+        />
 
-          {!isEmailInvalid ? (
-            <FormControlHelper>
-              <FormControlHelperText>
-                Use the email you signed up with
-              </FormControlHelperText>
-            </FormControlHelper>
-          ) : (
-            <FormControlError>
-              <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>Enter a valid email</FormControlErrorText>
-            </FormControlError>
-          )}
-        </FormControl>
+        <CustomButton
+          label='Login'
+          onPress={() => {
+            login(email, password);
+          }}
+        />
 
-        {/* Password Field */}
-        <FormControl isInvalid={isPasswordInvalid} isRequired>
-          <FormControlLabel>
-            <FormControlLabelText>Password</FormControlLabelText>
-          </FormControlLabel>
+        <Text className='text-center text-[#666] mb-8'>Or, </Text>
 
-          <Input>
-            <InputField
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              placeholder='••••••••'
-            />
-          </Input>
+        <View className='flex-row  mb-8 items-center justify-center'>
+          <TouchableOpacity
+            onPress={() => {}}
+            className='border-2 border-[#ddd] rounded-xl px-8 py-2 flex-row text-center'>
+            <GoogleSVG height={24} width={24} />
+            <Text className='ml-4'>Login with Google</Text>
+          </TouchableOpacity>
+        </View>
 
-          {isPasswordInvalid && (
-            <FormControlError>
-              <FormControlErrorIcon as={AlertCircleIcon} />
-              <FormControlErrorText>Minimum 6 characters</FormControlErrorText>
-            </FormControlError>
-          )}
-        </FormControl>
-
-        <Button
-          style={styles.loginButton}
-          isDisabled={isEmailInvalid || isPasswordInvalid}
-          onPress={() => login(email, password)}>
-          <Text style={styles.loginButtonText}>Login</Text>
-        </Button>
-
-        <Pressable onPress={() => navigation.navigate('SignupScreen' as never)}>
-          <Text style={styles.linkText}>
-            Don&apos;t have an account? Sign up
-          </Text>
-        </Pressable>
-      </VStack>
-    </Box>
+        <View className='flex-row justify-center mb-8'>
+          <Text>New to the app?</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('SignupScreen' as never)}>
+            <Text style={{ color: colors.primary }} className=' font-bold'>
+              {' '}
+              Register
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 }
 

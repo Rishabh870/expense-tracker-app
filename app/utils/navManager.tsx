@@ -5,6 +5,8 @@ import SettingsScreen from '../screens/SettingScreen';
 import { TransactionsScreen } from '../screens/TransactionsScreen';
 import ExpenseScreen from '../screens/ExpenseScreen';
 import { Navbar } from '../components/common/navbar';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import LoginScreen from '../screens/auth/Tesst';
 
 const Tab = createBottomTabNavigator();
 
