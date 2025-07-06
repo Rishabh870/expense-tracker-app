@@ -9,6 +9,8 @@ import AuthStack from './app/utils/authManager';
 import { useAuthStore } from './app/store/useAuthStore';
 import { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import ScreenStack from './app/utils/screenManager';
+import RootStackNavigator from './app/RootScreenManager';
 
 export default function App() {
   const { user, hasHydrated, loadUserFromStorage } = useAuthStore();
@@ -17,19 +19,18 @@ export default function App() {
     loadUserFromStorage();
   }, []);
 
-  if (!hasHydrated) {
-    return (
-      <View className='flex-1 justify-center items-center bg-white'>
-        <ActivityIndicator size='large' color='#1e40af' />
-      </View>
-    );
-  }
+  // if (!hasHydrated) {
+  //   return (
+  //     <View className='flex-1 justify-center items-center bg-white'>
+  //       <ActivityIndicator size='large' color='#1e40af' />
+  //     </View>
+  //   );
+  // }
   return (
     <GluestackUIProvider mode='light'>
       <SafeAreaProvider>
         <NavigationContainer>
-          {user ? <NavManager /> : <AuthStack />}
-          {/* <NavManager /> */}
+          <RootStackNavigator />
           <DialogManager />
         </NavigationContainer>
       </SafeAreaProvider>

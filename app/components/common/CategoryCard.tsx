@@ -6,6 +6,7 @@ import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { Icon, MailIcon } from '@/components/ui/icon';
 import * as TablerIcon from '@tabler/icons-react-native';
+import { colors } from '@/app/constants/theme';
 
 interface Props {
   icon: keyof typeof TablerIcon;
@@ -13,6 +14,7 @@ interface Props {
   category: string;
   description: string;
   amount: number;
+  isGiven: boolean;
 }
 
 export const CategoryCard = ({
@@ -21,34 +23,41 @@ export const CategoryCard = ({
   category,
   description,
   amount,
+  isGiven,
 }: Props) => {
   const DynamicIcon = TablerIcon[
     icon as keyof typeof TablerIcon
   ] as React.ComponentType<any>;
 
+  const amountColor = isGiven ? 'text-red-500' : 'text-green-500';
+
   return (
-    <Card size='md' variant='filled' className='mx-3 my-2 px-3 py-3 rounded-lg'>
-      <HStack space='md' className='text-center items-center'>
+    <Card
+      size='lg'
+      variant='filled'
+      style={{ backgroundColor: colors.cardbackground }}
+      className=' my-2 px-3 py-3 rounded-2xl'>
+      <HStack space='lg' className='text-center items-center justify-evenly'>
         {/* Left: Icon */}
         <Box
-          className='w-12 h-12 rounded-md items-center justify-center'
+          className='w-16 h-16 rounded-2xl items-center justify-center'
           style={{ backgroundColor: iconBg }}>
-          <DynamicIcon size={24} color='#fff' />
+          <DynamicIcon size={28} color='#fff' />
         </Box>
 
         {/* Middle: Text Info */}
         <VStack className='flex-1 ml-3'>
-          <Heading size='sm' className='mb-0.5'>
+          <Heading size='lg' className='mb-1.5'>
             {category}
           </Heading>
-          <Text size='xs' className='text-muted-500'>
+          <Text size='sm' className='text-muted-500 text-gray-500'>
             {description}
           </Text>
         </VStack>
 
         {/* Right: Amount */}
-        <Text size='sm' bold className='text-textDark-900'>
-          ₹{amount}
+        <Text size='lg' bold className={amountColor}>
+          {isGiven ? '-' : '+'} ₹{amount}
         </Text>
       </HStack>
     </Card>

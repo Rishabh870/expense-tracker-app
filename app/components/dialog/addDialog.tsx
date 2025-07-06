@@ -33,17 +33,17 @@ import {
   SelectPortal,
   SelectTrigger,
 } from '@/components/ui/select';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Text } from '@/components/ui/text';
 import {
-  Keyboard,
   KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   View,
 } from 'react-native';
 import { formatDate } from '@/app/utils/dateFormat';
+import { TextInput, Keyboard } from 'react-native';
 
 export const AddDialog = () => {
   const { closeDialog } = useDialogStore();
@@ -108,6 +108,8 @@ export const AddDialog = () => {
     await addExpense(form); // `form` already matches the expected structure
   };
 
+  const inputRef = useRef<TextInput>(null);
+
   return (
     <AlertDialog isOpen onClose={closeDialog} size='md'>
       <AlertDialogBackdrop />
@@ -127,7 +129,8 @@ export const AddDialog = () => {
                 <FormControlLabelText>Payer ID</FormControlLabelText>
               </FormControlLabel>
               {/* Payer */}
-              <Input>
+              <Input ref={inputRef}
+              >
                 <InputField
                   value={String(form.payer)}
                   onChangeText={(v) => handleChange('payer', v)}
@@ -165,10 +168,23 @@ export const AddDialog = () => {
               </FormControlLabel>
               {/* Category ID */}
               <Select
-                isRequired
-                onOpen={() => {
+                onPointerDown={() => {
                   Keyboard.dismiss();
+
+                  console.log('close category 2');
+                }}
+                isRequired
+                onClose={() => {
+                  Keyboard.dismiss();
+
+                  console.log('close category');
+                }}
+                onOpen={() => {
+                  inputRef.current?.blur();
                   setTimeout(() => {}, 100);
+                  Keyboard.dismiss();
+                  console.log('fuk u');
+
                 }}
                 selectedValue={selectedCategory}
                 onValueChange={handleSelectCategory}>

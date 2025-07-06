@@ -17,11 +17,14 @@ import { useState } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
 import { AlertCircleIcon } from '@/components/ui/icon';
 import { useAuthStore } from '@/app/store/useAuthStore';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '@/app/utils/types';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { login } = useAuthStore();
 
   const isEmailInvalid = email.trim() === '' || !email.includes('@');

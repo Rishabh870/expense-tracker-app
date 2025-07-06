@@ -1,20 +1,19 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AppBar } from '../components/common/appbar';
-import HomeScreen from '../screens/HomeScreen';
-import SettingsScreen from '../screens/SettingScreen';
-import { TransactionsScreen } from '../screens/TransactionsScreen';
-import ExpenseScreen from '../screens/ExpenseScreen';
-import { Navbar } from '../components/common/navbar';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import LoginScreen from '../screens/auth/Tesst';
+import { AppBar } from '../components/common/AppBar';
+import HomeScreen from '../screens/main/HomeScreen';
+import SettingsScreen from '../screens/main/SettingScreen';
+import { TransactionsScreen } from '../screens/main/TransactionsScreen';
+import ExpenseScreen from '../screens/main/ExpenseScreen';
+import { Navbar } from '../components/common/NavBar';
 
 const Tab = createBottomTabNavigator();
 
 export default function NavManager() {
   return (
     <Tab.Navigator
+      initialRouteName='Home'
       screenOptions={({ route }) => ({
-        header: (props) => <AppBar {...props} routeName={route.name} />,
+        header: () => <AppBar routeName={route.name} />,
       })}
       tabBar={(props) => <Navbar {...props} />}>
       <Tab.Screen name='Home' component={HomeScreen} />

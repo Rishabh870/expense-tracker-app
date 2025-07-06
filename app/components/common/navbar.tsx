@@ -15,6 +15,7 @@ import { useBreakpoint } from '@/app/utils/useBreakpoint';
 import { colors } from '@/app/constants/theme';
 import { Box } from '@/components/ui/box';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AddButton } from '../ui/AddButton';
 
 export const Navbar = ({
   state,
@@ -80,14 +81,7 @@ export const Navbar = ({
         {renderTab(state.routes[1], 1)}
 
         {/* Center Add Button */}
-        <View style={{ width: tabWidth, alignItems: 'center' }}>
-          <TouchableOpacity
-            onPress={() => useDialogStore.getState().openDialog('add')}
-            style={styles.addButton}
-            activeOpacity={0.8}>
-            <Ionicons name='add' size={30} color='#fff' />
-          </TouchableOpacity>
-        </View>
+        <AddButton tabWidth={tabWidth} />
 
         {/* Right tabs: Expense, Settings */}
         {renderTab(state.routes[2], 2)}

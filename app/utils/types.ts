@@ -37,3 +37,31 @@ export type ExpensesDetails = {
   payer: number;
   items: ExpenseItems[];
 };
+
+// Root navigator
+export type RootStackParamList = {
+  MainTabs: MainTabParamList;
+  Auth: AuthStackParamList;
+  Add: {
+    screen: keyof AddStackParamList;
+  };
+};
+
+// Auth navigator
+export type AuthStackParamList = {
+  LoginScreen: undefined;
+  SignupScreen: undefined;
+};
+
+// Main tab navigator
+export type MainTabParamList = {
+  Home: undefined;
+  Transactions: undefined;
+  Expense: undefined;
+  Settings: undefined;
+};
+export type AddStackParamList = {
+  AddExpense: undefined;
+  AddTransactions: undefined;
+  AddCategory: undefined;
+};

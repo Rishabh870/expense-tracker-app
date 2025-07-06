@@ -28,11 +28,14 @@ import { IconLock, IconMail, IconUser } from '@tabler/icons-react-native';
 
 import CustomButton from '@/app/components/ui/authButton';
 import { colors } from '@/app/constants/theme';
+import { RootStackParamList } from '@/app/utils/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [name, setName] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const { signup } = useAuthStore();

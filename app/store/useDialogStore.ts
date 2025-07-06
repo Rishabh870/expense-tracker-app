@@ -1,7 +1,7 @@
 // stores/useDialogStore.ts
 import { create } from 'zustand';
 
-type DialogType = 'add' | 'editTransaction' | 'deleteConfirm' | null;
+export type DialogType = 'add' | 'editTransaction' | 'deleteConfirm' | null;
 
 interface DialogState {
   dialogType: DialogType;
