@@ -87,7 +87,6 @@ export const AddExpense = () => {
       createdAt: new Date(Date.now()).toLocaleString('sv-SE'),
     };
 
-    console.log('Submitting Expense:', payload);
     // You can call addExpense(payload) here
   };
 

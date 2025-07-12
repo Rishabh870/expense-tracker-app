@@ -1,7 +1,7 @@
 // components/dialogs/AddDialog.tsx
 import { useDialogStore } from '@/app/store/useDialogStore';
 import { useExpenseStore } from '@/app/store/useExpenseStore';
-import { Categories, ExpensesDetails } from '@/app/utils/types';
+import { Category, Expense } from '@/app/utils/types';
 import {
   AlertDialog,
   AlertDialogBackdrop,
@@ -51,23 +51,9 @@ export const AddDialog = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  const [form, setForm] = useState<Omit<ExpensesDetails, 'id'>>({
-    title: '',
-    amount: 0,
-    category: {
-      id: 0,
-      name: '',
-      description: '',
-      icon: '',
-      bgColor: '',
-    },
-    date: new Date().toISOString().split('T')[0],
-    splits: [],
-    payer: 0,
-    items: [],
-  });
+  const [form, setForm] = useState<Omit<Expense, 'id'>>();
 
-  const categoryList: Categories[] = [
+  const categoryList: Category[] = [
     {
       id: 1,
       name: 'Food',
@@ -85,24 +71,17 @@ export const AddDialog = () => {
   ];
 
   const handleSelectCategory = (val: string) => {
-    console.log(val);
-
     setSelectedCategory(val);
     const category = categoryList.find((c) => c.name === val);
     if (category) {
-      setForm((prev) => ({
-        ...prev,
-        category,
-      }));
+      // setForm((prev) => ({
+      //   ...prev,
+      //   category,
+      // }));
     }
   };
 
-  const handleChange = (field: string, value: string | number) => {
-    setForm((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
+  const handleChange = (field: string, value: string | number) => {};
 
   const onSubmit = async () => {
     await addExpense(form); // `form` already matches the expected structure
@@ -129,10 +108,9 @@ export const AddDialog = () => {
                 <FormControlLabelText>Payer ID</FormControlLabelText>
               </FormControlLabel>
               {/* Payer */}
-              <Input ref={inputRef}
-              >
+              <Input ref={inputRef}>
                 <InputField
-                  value={String(form.payer)}
+                  value={String(form?.payer)}
                   onChangeText={(v) => handleChange('payer', v)}
                   keyboardType='numeric'
                   placeholder='Enter Payer ID'
@@ -143,7 +121,7 @@ export const AddDialog = () => {
               </FormControlLabel>
               <Input>
                 <InputField
-                  value={form.title}
+                  value={form?.title}
                   onChangeText={(v) => handleChange('title', v)}
                   placeholder='Expense title'
                   keyboardType='default'
@@ -156,7 +134,7 @@ export const AddDialog = () => {
               {/* Amount */}
               <Input>
                 <InputField
-                  value={String(form.amount)}
+                  value={String(form?.amount)}
                   onChangeText={(v) => handleChange('amount', v)}
                   keyboardType='numeric'
                   placeholder='Enter amount'
@@ -184,7 +162,6 @@ export const AddDialog = () => {
                   setTimeout(() => {}, 100);
                   Keyboard.dismiss();
                   console.log('fuk u');
-
                 }}
                 selectedValue={selectedCategory}
                 onValueChange={handleSelectCategory}>
@@ -226,7 +203,7 @@ export const AddDialog = () => {
                 }}>
                 <View style={styles.fakeInput}>
                   <Text style={styles.inputText}>
-                    {formatDate(form.date.toString()) || 'DD-MM-YYYY'}
+                    {formatDate(form!.date.toString()) || 'DD-MM-YYYY'}
                   </Text>
                 </View>
               </Pressable>
@@ -234,7 +211,7 @@ export const AddDialog = () => {
               {showDatePicker && (
                 <DateTimePicker
                   mode='date'
-                  value={form.date ? new Date(form.date) : new Date()}
+                  value={form?.date ? new Date(form.date) : new Date()}
                   display='default'
                   onChange={(event, selectedDate) => {
                     setShowDatePicker(false);

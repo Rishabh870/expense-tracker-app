@@ -1,5 +1,3 @@
-// screens/HomeScreen.tsx
-
 import { useAuthStore } from '@/app/store/useAuthStore';
 import { Box } from '@/components/ui/box';
 import { Button, ButtonText } from '@/components/ui/button';

@@ -7,29 +7,29 @@ import { Text } from '@/components/ui/text';
 import { Icon, MailIcon } from '@/components/ui/icon';
 import * as TablerIcon from '@tabler/icons-react-native';
 import { colors } from '@/app/constants/theme';
+import { Categories } from '@/app/utils/types';
 
 interface Props {
-  icon: keyof typeof TablerIcon;
-  iconBg: string;
-  category: string;
-  description: string;
-  amount: number;
-  isGiven: boolean;
+  title?: string;
+  category: Categories;
+  description?: string;
+  amount?: number;
+  isBilled?: boolean;
 }
 
 export const CategoryCard = ({
-  icon,
-  iconBg,
+  title,
   category,
   description,
   amount,
-  isGiven,
+  isBilled,
 }: Props) => {
   const DynamicIcon = TablerIcon[
-    icon as keyof typeof TablerIcon
+    category.icon as keyof typeof TablerIcon
   ] as React.ComponentType<any>;
 
-  const amountColor = isGiven ? 'text-red-500' : 'text-green-500';
+  const amountColor = isBilled ? 'text-red-500' : 'text-green-500';
+  const desc = description ? description : category.description;
 
   return (
     <Card
@@ -41,24 +41,28 @@ export const CategoryCard = ({
         {/* Left: Icon */}
         <Box
           className='w-16 h-16 rounded-2xl items-center justify-center'
-          style={{ backgroundColor: iconBg }}>
+          style={{ backgroundColor: category.bgColor }}>
           <DynamicIcon size={28} color='#fff' />
         </Box>
 
         {/* Middle: Text Info */}
         <VStack className='flex-1 ml-3'>
           <Heading size='lg' className='mb-1.5'>
-            {category}
+            {title ? title : category.name}
           </Heading>
-          <Text size='sm' className='text-muted-500 text-gray-500'>
-            {description}
-          </Text>
+          {desc && (
+            <Text size='sm' className='text-muted-500 text-gray-500'>
+              {desc}
+            </Text>
+          )}
         </VStack>
 
         {/* Right: Amount */}
-        <Text size='lg' bold className={amountColor}>
-          {isGiven ? '-' : '+'} ₹{amount}
-        </Text>
+        {amount && (
+          <Text size='lg' bold className={amountColor}>
+            {isBilled ? '-' : '+'} ₹{amount}
+          </Text>
+        )}
       </HStack>
     </Card>
   );

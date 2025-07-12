@@ -1,131 +1,115 @@
 import { create } from 'zustand';
+import { expenses as ExpenseDetailData } from '../data/expenseDetailsData';
 import { ExpensesDetails } from '../utils/types';
-import { PRIVATE_REQUEST } from '../utils/requestMethods';
+// import { PRIVATE_REQUEST } from '../utils/requestMethods'; // for future API integration
 
-export type ExpenseStore = {
+const PAGE_LIMIT = 10;
+
+interface ExpenseDetailStore {
   expenses: ExpensesDetails[];
-  chartExpenses: ExpensesDetails[];
+  expenseById: Record<number, ExpensesDetails>; // id-based store
+  expensesByPerson: Record<number, ExpensesDetails[]>; // personId -> expenses[]
+  expensesByCategory: Record<number, ExpensesDetails[]>; // categoryId -> expenses[]
+
+  page: number;
+  hasMore: boolean;
   loading: boolean;
-  error: string | null;
-  addExpense: (data: Omit<ExpensesDetails, 'id'>) => Promise<void>;
-  getExpense: () => Promise<void>;
-  getChartExpenses: () => Promise<void>;
-};
 
-export const useExpenseStore = create<ExpenseStore>((set) => ({
+  load: () => void;
+  getExpenseById: (id: number) => ExpensesDetails | undefined;
+  fetchExpenseById: (id: number) => void;
+  getExpensesByPerson: (personId: number) => ExpensesDetails[];
+  fetchExpensesByPerson: (personId: number) => void;
+  getExpensesByCategory: (categoryId: number) => ExpensesDetails[];
+  fetchExpensesByCategory: (categoryId: number) => void;
+}
+
+export const useExpenseDetailStore = create<ExpenseDetailStore>((set, get) => ({
   expenses: [],
-  chartExpenses: [
-    {
-      id: 1,
-      title: 'Groceries',
-      amount: 120,
-      category: {
-        id: 1,
-        name: 'Food',
-        description: 'Groceries and restaurants',
-        icon: 'IconBasketFilled',
-        bgColor: '#F87171',
-      },
-      date: new Date().toISOString(),
-      payer: 1,
-      splits: [],
-      items: [],
-      createdAt: Date.now().toString(),
-    },
-    {
-      id: 2,
-      title: 'Cab Ride',
-      amount: 75,
-      category: {
-        id: 2,
-        name: 'Transport',
-        description: 'Taxi and rides',
-        icon: 'IconBus',
-        bgColor: '#60A5FA',
-      },
-      date: new Date(
-        new Date().setDate(new Date().getDate() - 2),
-      ).toISOString(),
-      payer: 2,
-      splits: [],
-      items: [],
-      createdAt: Date.now().toString(),
-    },
-    {
-      id: 3,
-      title: 'Movie Night',
-      amount: 300,
-      category: {
-        id: 3,
-        name: 'Entertainment',
-        description: 'Movies, games',
-        icon: 'IconMovie',
-        bgColor: '#34D399',
-      },
-      date: new Date(
-        new Date().setDate(new Date().getDate() - 5),
-      ).toISOString(),
-      payer: 3,
-      splits: [],
-      items: [],
-      createdAt: Date.now().toString(),
-    },
-  ],
+  expenseById: {},
+  expensesByPerson: {},
+  page: 1,
+  hasMore: true,
   loading: false,
-  error: null,
+  expensesByCategory: {},
 
-  addExpense: async (data) => {
-    set({ loading: true, error: null });
+  getExpensesByCategory: (categoryId) => {
+    return get().expensesByCategory[categoryId] || [];
+  },
 
-    try {
-      const res = await PRIVATE_REQUEST.post('/expense', data);
-      const newExpense: ExpensesDetails = res.data;
+  fetchExpensesByCategory: (categoryId) => {
+    // Replace with future API call if needed
+    const fullData = ExpenseDetailData;
 
+    const filtered = fullData.filter((exp) => exp.category?.id === categoryId);
+
+    set((state) => ({
+      expensesByCategory: {
+        ...state.expensesByCategory,
+        [categoryId]: filtered,
+      },
+    }));
+  },
+
+  load: () => {
+    const { page, expenses } = get();
+    set({ loading: true });
+
+    const start = (page - 1) * PAGE_LIMIT;
+    const end = start + PAGE_LIMIT;
+    const fullData = ExpenseDetailData;
+    const data = fullData.slice(start, end);
+
+    const idMap: Record<number, ExpensesDetails> = {};
+    data.forEach((exp) => {
+      idMap[exp.id] = exp;
+    });
+
+    set({
+      expenses: [...expenses, ...data],
+      expenseById: { ...get().expenseById, ...idMap },
+      page: page + 1,
+      hasMore: end < fullData.length,
+      loading: false,
+    });
+  },
+
+  getExpenseById: (id) => {
+    return get().expenseById[id];
+  },
+
+  fetchExpenseById: (id) => {
+    //     const res = await PRIVATE_REQUEST.get(`/expenses/${id}`);
+    // const match = res.data as ExpensesDetails;
+
+    const fullData = ExpenseDetailData; // Replace with API request in future
+    const match = fullData.find((exp) => exp.id === id);
+    if (match) {
       set((state) => ({
-        expenses: [...state.expenses, newExpense],
-        loading: false,
+        expenseById: { ...state.expenseById, [id]: match },
       }));
-    } catch (error) {
-      const message = (error as string) || 'Failed to add expense';
-      set({ error: message, loading: false });
     }
   },
 
-  getExpense: async () => {
-    set({ loading: true, error: null });
-
-    try {
-      const res = await PRIVATE_REQUEST.get('/expense');
-      const expenses: ExpensesDetails[] = res.data;
-      set({ expenses, loading: false });
-    } catch (error) {
-      const message = (error as string) || 'Failed to fetch expenses';
-      set({ error: message, loading: false });
-    }
+  getExpensesByPerson: (personId) => {
+    return get().expensesByPerson[personId] || [];
   },
 
-  getChartExpenses: async () => {
-    set({ loading: true, error: null });
+  fetchExpensesByPerson: (personId) => {
+    //    const res = await PRIVATE_REQUEST.get(`/expenses?personId=${personId}`);
+    // const filtered = res.data as ExpensesDetails[];
 
-    try {
-      const oneMonthAgo = new Date();
-      oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const fullData = ExpenseDetailData; // Replace with API call in future
 
-      const res = await PRIVATE_REQUEST.get('/expense');
-      const data: ExpensesDetails[] = res.data;
+    const filtered = fullData.filter((exp) =>
+      exp.splits.some((p) => Number(p.id) === Number(personId)),
+    );
 
-      const filtered = data.filter((item) => {
-        const expenseDate = new Date(item.date);
-        return expenseDate >= oneMonthAgo;
-      });
-
-      set({
-        chartExpenses: filtered,
-        loading: false,
-      });
-    } catch (error) {
-      const message = (error as string) || 'Failed to fetch chart data';
-      set({ error: message, loading: false });
-    }
+    set((state) => ({
+      expensesByPerson: {
+        ...state.expensesByPerson,
+        [personId]: filtered,
+      },
+    }));
   },
 }));

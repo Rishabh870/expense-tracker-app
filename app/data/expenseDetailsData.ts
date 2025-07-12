@@ -1,0 +1,215 @@
+// data/mockExpenses.ts
+
+import { ExpensesDetails } from '../utils/types';
+import { persons as splitPersons } from '../data/personData';
+import { categories } from '../data/categoryData';
+
+export const expenses: ExpensesDetails[] = [
+  {
+    id: 1,
+    title: 'Dinner at Italian Place',
+    amount: 2400,
+    date: '2025-07-05T20:00:00Z',
+    category: categories.find((c) => c.id === 1)!,
+    splits: [splitPersons[0], splitPersons[1], splitPersons[2]],
+    payer: 1,
+    items: [
+      {
+        id: 1,
+        name: 'Pasta',
+        amount: 800,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+      {
+        id: 2,
+        name: 'Pizza',
+        amount: 1000,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+      {
+        id: 3,
+        name: 'Wine',
+        amount: 600,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 2,
+    title: 'Weekly Grocery Run',
+    amount: 1800,
+    date: '2025-07-04T15:30:00Z',
+    category: categories.find((c) => c.id === 2)!,
+    splits: [
+      splitPersons[0],
+      splitPersons[1],
+      splitPersons[0],
+      splitPersons[1],
+    ],
+    payer: 2,
+    items: [
+      {
+        id: 1,
+        name: 'Vegetables',
+        amount: 800,
+        quantity: 1,
+        assigned_to: [
+          splitPersons[0],
+          splitPersons[1],
+          splitPersons[0],
+          splitPersons[1],
+        ],
+      },
+      {
+        id: 2,
+        name: 'Snacks',
+        amount: 1000,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 3,
+    title: 'Electricity Bill',
+    amount: 1200,
+    date: '2025-07-03T12:00:00Z',
+    category: categories.find((c) => c.id === 3)!,
+    splits: [splitPersons[0], splitPersons[1]],
+    payer: 1,
+    items: [
+      {
+        id: 1,
+        name: 'Electricity - June',
+        amount: 1200,
+        quantity: 1,
+        assigned_to: [splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 4,
+    title: 'Uber to Airport',
+    amount: 500,
+    date: '2025-07-02T08:30:00Z',
+    category: categories.find((c) => c.id === 4)!,
+    splits: [splitPersons[0], splitPersons[1]],
+    payer: 3,
+    items: [
+      {
+        id: 1,
+        name: 'Uber',
+        amount: 500,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: 'T-Shirts from Mall',
+    amount: 2200,
+    date: '2025-07-01T17:00:00Z',
+    category: categories.find((c) => c.id === 5)!,
+    splits: [splitPersons[0], splitPersons[1]],
+    payer: 2,
+    items: [
+      {
+        id: 1,
+        name: 'Black Tee',
+        amount: 1100,
+        quantity: 1,
+        assigned_to: [splitPersons[1]],
+      },
+      {
+        id: 2,
+        name: 'White Tee',
+        amount: 1100,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 6,
+    title: 'Netflix Subscription',
+    amount: 999,
+    date: '2025-06-30T12:00:00Z',
+    category: categories.find((c) => c.id === 6)!,
+    splits: [splitPersons[0]],
+    payer: 1,
+    items: [
+      {
+        id: 1,
+        name: 'Netflix Monthly',
+        amount: 999,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 7,
+    title: 'Uber to Airport',
+    amount: 500,
+    date: '2025-07-05T08:30:00Z',
+    category: categories.find((c) => c.id === 4)!,
+    splits: [splitPersons[0], splitPersons[1]],
+    payer: 3,
+    items: [
+      {
+        id: 1,
+        name: 'Uber',
+        amount: 500,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 8,
+    title: 'T-Shirts from Mall',
+    amount: 2200,
+    date: '2025-06-01T17:00:00Z',
+    category: categories.find((c) => c.id === 5)!,
+    splits: [splitPersons[0], splitPersons[1]],
+    payer: 2,
+    items: [
+      {
+        id: 1,
+        name: 'Black Tee',
+        amount: 1100,
+        quantity: 1,
+        assigned_to: [splitPersons[1]],
+      },
+      {
+        id: 2,
+        name: 'White Tee',
+        amount: 1100,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+  {
+    id: 9,
+    title: 'Netflix Subscription',
+    amount: 999,
+    date: '2025-06-30T12:00:00Z',
+    category: categories.find((c) => c.id === 6)!,
+    splits: [splitPersons[0]],
+    payer: 1,
+    items: [
+      {
+        id: 1,
+        name: 'Netflix Monthly',
+        amount: 999,
+        quantity: 1,
+        assigned_to: [splitPersons[0], splitPersons[1]],
+      },
+    ],
+  },
+];

@@ -1,53 +1,106 @@
-// store/useTransactionStore.ts
+// store/usetransactionStore.ts
 
 import { create } from 'zustand';
-import db from '../data/db.json'; // adjust path as needed
+import { expenses as ExpenseDetailData } from '../data/expenseDetailsData';
+import { Categories } from '../utils/types';
+import { PRIVATE_REQUEST } from '../utils/requestMethods';
 
-interface Transaction {
-  id: string;
+export interface transaction {
+  id: number;
+  title: string;
   date: string;
-  category: any;
-  description: string;
+  category: Categories;
   amount: number;
-  isGiven: boolean;
-  billed?: boolean; // true or false
-  icon: string;
-  iconBg: string;
+  billed?: boolean;
 }
 
-interface TransactionStore {
-  transactions: Transaction[];
-  grouped: Record<string, Transaction[]>;
-  unbilled: Transaction[];
+interface transactionStore {
+  transactions: transaction[];
+  grouped: Record<string, transaction[]>;
+  unbilled: transaction[];
+  page: number;
+  hasMore: boolean;
+  loading: boolean;
   load: () => void;
+  loadMore: () => void;
+  reset: () => void;
 }
 
-export const useTransactionStore = create<TransactionStore>((set) => ({
+const PAGE_LIMIT = 10;
+
+export const usetransactionStore = create<transactionStore>((set, get) => ({
   transactions: [],
   grouped: {},
   unbilled: [],
+  page: 1,
+  hasMore: true,
+  loading: false,
   load: () => {
+    const { page, transactions } = get();
+    set({ loading: true });
     // fetch or mock your data
-    const data: Transaction[] = db.transactions;
+    try {
+      // const res = await PRIVATE_REQUEST.get(`/transactions?page=${page}&limit=${PAGE_LIMIT}`);
+      // const data: Transaction[] = res.data;
 
-    // group by date
-    const groupedData: Record<string, Transaction[]> = {};
-    const unbilledData: Transaction[] = [];
+      const start = (page - 1) * PAGE_LIMIT;
+      const end = start + PAGE_LIMIT;
 
-    for (const tx of data) {
-      if (tx.billed === false) {
-        unbilledData.push(tx);
-      } else {
-        const dateKey = tx.date.split('T')[0]; // assume ISO string
-        if (!groupedData[dateKey]) groupedData[dateKey] = [];
-        groupedData[dateKey].push(tx);
+      const fullData: transaction[] = ExpenseDetailData;
+      const data = fullData.slice(start, end);
+
+      const hasMore = end < data.length;
+
+      const newGrouped = { ...get().grouped };
+      const newUnbilled = [...get().unbilled];
+
+      for (const tx of data) {
+        const dateKey = tx.date.split('T')[0] || tx.date.split(' ')[0]; // handles both formats
+
+        if (tx.billed === false) {
+          newUnbilled.push(tx);
+        } else {
+          if (!newGrouped[dateKey]) newGrouped[dateKey] = [];
+          newGrouped[dateKey].push(tx);
+        }
       }
-    }
 
+      set({
+        transactions: [...transactions, ...data],
+        grouped: newGrouped,
+        unbilled: newUnbilled,
+        page: page + 1,
+        hasMore,
+        loading: false,
+      });
+    } catch (error) {
+      console.error('Failed to load transactions:', error);
+      set({ loading: false });
+    }
+  },
+  reset() {
     set({
-      transactions: data,
-      grouped: groupedData,
-      unbilled: unbilledData,
+      transactions: [],
+      grouped: {},
+      unbilled: [],
+      page: 1,
+      hasMore: true,
     });
   },
+  loadMore: async () => {
+    const { hasMore, loading } = get();
+    if (loading || !hasMore) {
+      return;
+    }
+    await get().load();
+  },
 }));
+
+const groupByDate = (data: transaction[]) => {
+  return data.reduce((acc, tx) => {
+    const dateKey = tx.date.split('T')[0];
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(tx);
+    return acc;
+  }, {} as Record<string, transaction[]>);
+};

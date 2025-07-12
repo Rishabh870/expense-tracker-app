@@ -20,7 +20,7 @@ export default function RootStackNavigator() {
       {user ? (
         <>
           <RootStack.Screen name='MainTabs' component={NavManager} />
-          <RootStack.Screen name='Add' component={ScreenStack} />
+          <RootStack.Screen name='Screens' component={ScreenStack} />
         </>
       ) : (
         <RootStack.Screen name='Auth' component={AuthStack} />

@@ -62,9 +62,9 @@ export const Navbar = ({
     switch (name) {
       case 'Home':
         return 'home-outline';
-      case 'Transactions':
-        return 'list-outline';
       case 'Expense':
+        return 'list-outline';
+      case 'Settlement':
         return 'cash-outline';
       case 'Settings':
         return 'settings-outline';

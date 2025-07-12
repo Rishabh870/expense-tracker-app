@@ -11,7 +11,7 @@ import { DialogType, useDialogStore } from '@/app/store/useDialogStore';
 import * as TablerIcon from '@tabler/icons-react-native';
 import { colors } from '@/app/constants/theme';
 import { useNavigation } from '@react-navigation/native';
-import { AddStackParamList, RootStackParamList } from '@/app/utils/types';
+import { ScreensStackParamList, RootStackParamList } from '@/app/utils/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 export const AddButton = ({ tabWidth }: { tabWidth: any }) => {
@@ -111,8 +111,8 @@ export const AddButton = ({ tabWidth }: { tabWidth: any }) => {
                 <TouchableOpacity
                   onPress={() => {
                     toggleSpeedDial(); // close speed dial first
-                    navigation.navigate('Add', {
-                      screen: item.screen as keyof AddStackParamList,
+                    navigation.navigate('Screens', {
+                      screen: item.screen as keyof ScreensStackParamList,
                     }); // navigate to screen
                   }}>
                   <Text style={styles.speedDialLabel}>{item.label}</Text>
