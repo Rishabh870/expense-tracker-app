@@ -1,36 +1,36 @@
-import { create } from 'zustand';
-import { categories as categoriesData } from '../data/categoryData';
-import { Category } from '../utils/interfaces';
+import { create } from "zustand";
+import { CategoryItem } from "../types/category.types";
+import { PRIVATE_REQUEST } from "../utils/requestMethods";
+import { BudgetItem } from "../types/budget.types";
 
 const PAGE_LIMIT = 5;
 
-interface CategoryStore {
-  categories: Category[];
-  page: number;
-  hasMore: boolean;
+type CategoryState = {
+  categories: CategoryItem[];
+  net_budget?: BudgetItem | null;
   loading: boolean;
-  load: () => void;
-}
+  hasMore: boolean;
+  fetchCategories: () => Promise<void>;
+};
 
-export const useCategoryStore = create<CategoryStore>((set, get) => ({
+export const useCategoryStore = create<CategoryState>((set, get) => ({
   categories: [],
-  page: 1,
-  hasMore: true,
   loading: false,
-  load: () => {
-    const { page, categories } = get();
-    set({ loading: true });
+  hasMore: false,
 
-    const start = (page - 1) * PAGE_LIMIT;
-    const end = start + PAGE_LIMIT;
-    const fullData = categoriesData as Category[];
-    const data = fullData.slice(start, end);
-
-    set({
-      categories: [...categories, ...data],
-      page: page + 1,
-      hasMore: end < fullData.length,
-      loading: false,
-    });
+  fetchCategories: async () => {
+    try {
+      set({ loading: true });
+      const res = await PRIVATE_REQUEST.get<CategoryItem[]>("/category/");
+      const data = res.data;
+      const net_budget = data.find((item) => item.is_net);
+      console.log(data)
+      if (net_budget) {
+        set({ net_budget: net_budget.budgets });
+      }
+      set({ categories: data || [] });
+    } catch (error) {
+      console.error("Failed to fetch categories:", error);
+    }
   },
 }));

@@ -1,10 +1,10 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AppBar } from '../components/common/AppBar';
 import HomeScreen from '../screens/main/HomeScreen';
 import SettingsScreen from '../screens/main/SettingScreen';
 import { ExpenseScreen } from '../screens/main/ExpenseScreen';
 import SettlementScreen from '../screens/main/SettlementScreen';
-import { Navbar } from '../components/common/NavBar';
+import { AppBar } from '../components/common/appbar';
+import { Navbar } from '../components/common/navbar';
 
 const Tab = createBottomTabNavigator();
 

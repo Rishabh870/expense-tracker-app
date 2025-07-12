@@ -25,7 +25,7 @@ export default function App() {
   //       <ActivityIndicator size='large' color='#1e40af' />
   //     </View>
   //   );
-  // }
+  // }s
   return (
     <GluestackUIProvider mode='light'>
       <SafeAreaProvider>
