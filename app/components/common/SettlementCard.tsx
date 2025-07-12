@@ -37,7 +37,7 @@ export const SettlementCard = ({ name, phone, amount, type }: Props) => {
       size='lg'
       variant='filled'
       style={{ backgroundColor: colors.cardbackground }}
-      className='my-2 px-3 py-3 rounded-2xl'>
+      className='my-2 px-3 py-3 rounded'>
       <HStack space='lg' className='items-center justify-evenly'>
         {/* Avatar Circle */}
         <AvatarFromName name={name} />

@@ -28,7 +28,7 @@ export const useCategoryStore = create<CategoryState>((set, get) => ({
       if (net_budget) {
         set({ net_budget: net_budget.budgets });
       }
-      set({ categories: data || [] });
+      set({ categories: data.filter((item)=>!item.is_net) || [] });
     } catch (error) {
       console.error("Failed to fetch categories:", error);
     }

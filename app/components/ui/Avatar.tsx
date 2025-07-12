@@ -34,18 +34,23 @@ export const AvatarFromName = ({
   name,
   bgColor = '#3B82F6',
   size = 64,
-  textSize = 18,
+  textSize = 24,
 }: AvatarFromNameProps) => {
   const initials = getInitials(name);
   const dynamicBgColor = stringToColor(name) || bgColor;
 
   return (
     <Box
-      className='rounded-full items-center justify-center'
+      className='rounded items-center justify-center'
       style={{
         backgroundColor: dynamicBgColor,
-        width: size,
-        height: size,
+        borderRadius: 12, // 👈 Equivalent to rounded-2xl
+        padding: 14,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 5,
       }}>
       <Text
         style={{

@@ -20,7 +20,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   hasHydrated: false,
   login: async (email, password) => {
-    try {
+    try {console.log(email)
       const res = await PUBLIC_REQUEST.post('/auth/login', {
         identifier: email,
         password,

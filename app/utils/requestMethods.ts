@@ -1,4 +1,4 @@
-export const BASE_URL: string = 'http://10.0.2.2:8000';
+export const BASE_URL: string = 'http://192.168.29.209:8000';
 // export const BASE_URL: string = 'http://172.23.48.1:8000';
 
 import axios from 'axios';
