@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -11,12 +11,12 @@ import {
   TextInput,
   Pressable,
   Keyboard,
-} from 'react-native';
-import * as TablerIcon from '@tabler/icons-react-native';
-import { colors } from '@/app/constants/theme';
-import { useNavigation } from '@react-navigation/native';
-import { Categories, RootStackParamList } from '@/app/utils/types';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+} from "react-native";
+import * as TablerIcon from "@tabler/icons-react-native";
+import { colors } from "@/app/constants/theme";
+import { useNavigation } from "@react-navigation/native";
+import { Categories, RootStackParamList } from "@/app/utils/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import {
   Select,
   SelectBackdrop,
@@ -28,37 +28,44 @@ import {
   SelectItem,
   SelectPortal,
   SelectTrigger,
-} from '@/components/ui/select';
-import { formatDate } from '@/app/utils/dateFormat';
-import DateTimePicker from '@react-native-community/datetimepicker';
+} from "@/components/ui/select";
+import { formatDate } from "@/app/utils/dateFormat";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useCategoryStore } from "@/app/store/useCategoryStore.ts";
+import { usePersonStore } from "@/app/store/usePersonStore";
+import { MultiSelect } from "react-native-element-dropdown";
+import { ExpensesDetails } from "@/app/types/expense.types";
+import { useExpenseDetailStore } from "@/app/store/useExpenseStore";
 
 export const AddExpense = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState('');
-  const [totalAmount, setTotalAmount] = useState('');
-  const [payerId, setPayerId] = useState('');
-  const [category, setCategory] = useState<Categories>();
+  const [title, setTitle] = useState("");
+  const [amount, setAmount] = useState("");
+  const [totalAmount, setTotalAmount] = useState("");
+  const [payerId, setPayerId] = useState("");
+  const [category, setCategory] = useState<string>();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const categoryList: Categories[] = [
-    {
-      id: 1,
-      name: 'Food',
-      description: 'Groceries and restaurants',
-      icon: 'IconBasketFilled',
-      bgColor: '#F87171',
-    },
-    {
-      id: 2,
-      name: 'Transport',
-      description: 'Bus, train, taxi',
-      icon: 'IconBus',
-      bgColor: '#60A5FA',
-    },
-  ];
+  const [splitInto, setSplitInto] = useState([]);
+
+  const {
+    categories,
+    fetchCategories,
+    loading: categoryStateLoading,
+  } = useCategoryStore();
+
+  const {
+    persons,
+    fetchSplitPersons,
+    loading: personStateLoading,
+  } = usePersonStore();
+
+  const { addExpense } = useExpenseDetailStore();
+  useEffect(() => {
+    Promise.all([fetchCategories(), fetchSplitPersons()]);
+  }, []);
 
   const handleDateChange = (event: any, date?: Date) => {
     setShowDatePicker(false);
@@ -72,97 +79,94 @@ export const AddExpense = () => {
     setTimeout(() => setShowDatePicker(true), 100);
   };
 
-  const handleSubmit = () => {
-    if (!payerId || !title || !amount || !category) {
-      console.warn('Please fill in all fields');
-      return;
-    }
-
-    const payload = {
-      payerId: Number(payerId),
+  const handleSubmit = async () => {
+    const payload: Partial<ExpensesDetails> = {
       title,
       amount: Number(amount),
-      category,
-      date: selectedDate.toLocaleString('sv-SE'),
-      createdAt: new Date(Date.now()).toLocaleString('sv-SE'),
+      category_id: category,
+      date: selectedDate.toISOString().slice(0, 10),
+      payer: Number(payerId),
+      is_split: splitInto.length > 0,
+      split_users: splitInto.map((userId) => ({
+        person: userId,
+        user: userId,
+        amount: (Number(amount) / splitInto.length).toFixed(2), // or use your actual split logic
+      })),
     };
-
+    await addExpense(payload);
     // You can call addExpense(payload) here
   };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* AppBar */}
-      <View className='items-center justify-center mt-12' style={styles.appBar}>
+      <View className="items-center justify-center mt-12" style={styles.appBar}>
         <TouchableOpacity
-          className='w-fit absolute left-2'
-          onPress={() => navigation.goBack()}>
-          <TablerIcon.IconChevronLeft size={24} color='#fff' />
+          className="w-fit absolute left-2"
+          onPress={() => navigation.goBack()}
+        >
+          <TablerIcon.IconChevronLeft size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>Add Expense</Text>
       </View>
 
       {/* Placeholder to balance layout */}
-      <View className='h-1/4 pl-5 justify-center'>
+      <View className="h-1/4 pl-5 justify-center">
         <Text
           style={{ color: colors.textSecondary }}
-          className='text-2xl opacity-70 mb-5'>
-          {' '}
+          className="text-2xl opacity-70 mb-5"
+        >
+          {" "}
           How Much?
         </Text>
-        <Text style={{ color: colors.textPrimary }} className='text-6xl'>
-          {amount == '' ? 0 : amount}
+        <Text style={{ color: colors.textPrimary }} className="text-6xl">
+          {amount == "" ? 0 : amount}
         </Text>
       </View>
 
       {/* Bottom Sheet White Container */}
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        style={styles.sheet}>
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={styles.sheet}
+      >
         <ScrollView
-          className='mt-5'
+          className="mt-5"
           contentContainerStyle={styles.sheetContent}
-          keyboardShouldPersistTaps='handled'>
+          keyboardShouldPersistTaps="handled"
+        >
           <TextInput
-            placeholder='Enter Payer ID'
-            keyboardType='numeric'
-            value={payerId}
-            onChangeText={setPayerId}
-            style={styles.input}
-            placeholderTextColor='#999'
-          />
-
-          <TextInput
-            placeholder='Enter Title'
+            placeholder="Enter Title"
             value={title}
             onChangeText={setTitle}
             style={styles.input}
-            placeholderTextColor='#999'
+            placeholderTextColor="#999"
           />
 
           <TextInput
-            placeholder='Amount'
+            placeholder="Amount"
             value={amount.toString()}
             onChangeText={setAmount}
-            keyboardType='numeric'
+            keyboardType="numeric"
             style={styles.input}
-            placeholderTextColor='#999'
+            placeholderTextColor="#999"
           />
 
           <Select
-            className='mb-5 '
-            selectedValue={category?.name}
+            className="mb-5 "
+            selectedValue={category}
             onValueChange={(val) => {
-              const selected = categoryList.find((c) => c.name === val);
-              if (selected) setCategory(selected);
-            }}>
+              console.info(val);
+              setCategory(val.toString());
+            }}
+          >
             <SelectTrigger
-              className='justify-between rounded-xl h-14'
-              variant='outline'
-              size='lg'>
-              <SelectInput className='py-0' placeholder='Select option' />
+              className="justify-between rounded-xl h-14"
+              variant="outline"
+              size="lg"
+            >
+              <SelectInput className="py-0" placeholder="Select Category" />
               <SelectIcon
-                className='mr-3'
+                className="mr-3"
                 as={TablerIcon.IconCaretDownFilled}
               />
             </SelectTrigger>
@@ -172,12 +176,12 @@ export const AddExpense = () => {
                 <SelectDragIndicatorWrapper>
                   <SelectDragIndicator />
                 </SelectDragIndicatorWrapper>
-                {categoryList.map((category, index) => {
+                {categories.map((category, index) => {
                   return (
                     <SelectItem
                       key={index}
                       label={category.name}
-                      value={category.name}
+                      value={category.id?.toString() || ""}
                     />
                   );
                 })}
@@ -185,23 +189,107 @@ export const AddExpense = () => {
             </SelectPortal>
           </Select>
 
+          <Select
+            className="mb-5"
+            placeholder="Select Payer"
+            selectedValue={payerId}
+            onValueChange={(val) => {
+              console.warn(val);
+              setPayerId(val.toString());
+            }}
+          >
+            <SelectTrigger
+              className="justify-between rounded-xl h-14"
+              variant="outline"
+              size="lg"
+            >
+              <SelectInput className="py-0" placeholder="Select Payer" />
+              <SelectIcon
+                className="mr-3"
+                as={TablerIcon.IconCaretDownFilled}
+              />
+            </SelectTrigger>
+            <SelectPortal>
+              <SelectBackdrop />
+              <SelectContent>
+                <SelectDragIndicatorWrapper>
+                  <SelectDragIndicator />
+                </SelectDragIndicatorWrapper>
+                {persons.map((person, index) => {
+                  return (
+                    <SelectItem
+                      key={index}
+                      label={person.name}
+                      value={person.id.toString()}
+                    />
+                  );
+                })}
+              </SelectContent>
+            </SelectPortal>
+          </Select>
           <Pressable onPress={openDatePicker}>
             <View
-              className='rounded-xl h-14 justify-center'
-              style={styles.fakeInput}>
+              className="rounded-xl h-14 justify-center"
+              style={styles.fakeInput}
+            >
               <Text style={styles.inputText}>
                 {selectedDate
-                  ? formatDate(selectedDate.toString(), 'datepicker')
-                  : 'DD-MM-YYYY'}
+                  ? formatDate(selectedDate.toString(), "datepicker")
+                  : "DD-MM-YYYY"}
               </Text>
             </View>
           </Pressable>
 
+          <View className="mt-4">
+            <MultiSelect
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              data={persons.map((item) => ({
+                value: item.id,
+                label: item.name,
+              }))}
+              labelField="label"
+              valueField="value"
+              placeholder="Select item"
+              searchPlaceholder="Search..."
+              value={splitInto}
+              onChange={(item) => {
+                setSplitInto(item);
+              }}
+              selectedStyle={styles.selectedStyle}
+              renderItem={(item) => {
+                const isSelected = splitInto.includes(item.value);
+                return (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      paddingVertical: 10,
+                      paddingHorizontal: 15,
+                      backgroundColor: isSelected ? "#EEF2FF" : "white",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Text style={{ color: isSelected ? "#4F46E5" : "#111827" }}>
+                      {item.label}
+                    </Text>
+                    {isSelected && (
+                      <TablerIcon.IconCheck size={20} color="#4F46E5" />
+                    )}
+                  </View>
+                );
+              }}
+            />
+          </View>
+
           {showDatePicker && (
             <DateTimePicker
-              mode='date'
+              mode="date"
               value={selectedDate}
-              display='default'
+              display="default"
               onChange={handleDateChange}
             />
           )}
@@ -224,17 +312,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.primary,
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   sheet: {
-    marginTop: 'auto',
+    marginTop: "auto",
     backgroundColor: colors.background,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
@@ -242,19 +330,17 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 32,
   },
-  sheetContent: {
-    paddingBottom: 100,
-  },
+  sheetContent: {},
   placeholder: {
     fontSize: 16,
-    color: '#888',
-    textAlign: 'center',
+    color: "#888",
+    textAlign: "center",
     marginTop: 20,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 10,
+    borderColor: "#ccc",
+    borderRadius: 12,
     padding: 12,
     marginBottom: 16,
     fontSize: 16,
@@ -263,31 +349,59 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     color: colors.text,
   },
   submitButton: {
     backgroundColor: colors.primary,
     paddingVertical: 14,
     borderRadius: 10,
-    alignItems: 'center',
-    marginTop: 12,
+    alignItems: "center",
+    marginTop: 50,
     marginBottom: 20,
   },
   submitText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   fakeInput: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     paddingVertical: 10,
     paddingHorizontal: 12,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   inputText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
+  },
+  dropdown: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  selectedStyle: {
+    borderRadius: 12,
   },
 });

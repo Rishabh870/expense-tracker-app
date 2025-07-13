@@ -1,36 +1,26 @@
-import { create } from 'zustand';
-import { persons as splitPersonsData } from '../data/personData'; // Adjust path as needed
-import { SplitUser } from '../utils/interfaces';
-
-const PAGE_LIMIT = 5;
+import { create } from "zustand";
+import { SplitUser } from "../utils/interfaces";
+import { PRIVATE_REQUEST } from "../utils/requestMethods";
 
 interface PersonStore {
   persons: SplitUser[];
-  page: number;
-  hasMore: boolean;
-  loading: boolean;
-  load: () => void;
+  loading?: boolean;
+  fetchSplitPersons: () => Promise<void>;
 }
 
 export const usePersonStore = create<PersonStore>((set, get) => ({
   persons: [],
   page: 1,
-  hasMore: true,
   loading: false,
-  load: () => {
-    const { page, persons } = get();
-    set({ loading: true });
-
-    const start = (page - 1) * PAGE_LIMIT;
-    const end = start + PAGE_LIMIT;
-    const fullData = splitPersonsData as SplitUser[];
-    const data = fullData.slice(start, end);
-
-    set({
-      persons: [...persons, ...data],
-      page: page + 1,
-      hasMore: end < fullData.length,
-      loading: false,
-    });
+  fetchSplitPersons: async () => {
+    try {
+      set({ loading: true });
+      const res = await PRIVATE_REQUEST.get("/split-user/");
+      set({ persons: res.data });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      set({ loading: false });
+    }
   },
 }));
