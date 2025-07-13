@@ -4,12 +4,13 @@ import { CategoryCard } from "../../components/common/CategoryCard";
 import { Heading } from "@/components/ui/heading";
 import { formatDate } from "../../utils/dateFormat";
 import SegmentTabs from "../../components/common/SegmentTabs";
-import { usetransactionStore } from "@/app/store/useTransactionStore";
 import { Pressable } from "@/components/ui/pressable";
 import { Categories, RootStackParamList } from "@/app/utils/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useExpenseDetailStore } from "@/app/store/useExpenseStore";
+import TransactionList from "../TransactionsList";
+import { UnbilledTransactionScreen } from "../UnbilledTransactions";
 
 export const ExpenseScreen = () => {
   const { groupedExpensed, fetchExpenses } = useExpenseDetailStore();
@@ -37,91 +38,10 @@ export const ExpenseScreen = () => {
         onTabChange={(key) => setActiveTab(key as "transactions" | "unbilled")}
       />
       {activeTab === "transactions" ? (
-        // transaction screen
-        <SectionList
-          className="h-full px-4"
-          sections={groupedExpensed.map(({ date, expenses }) => ({
-            title: formatDate(date.toString()),
-            data: expenses,
-          }))}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item, index }) => (
-            <Pressable
-              onPress={() => {
-                const data: Categories = item.category;
-                navigation.navigate("Screens", {
-                  screen: "ExpenseDetails",
-                  params: {
-                    name: item.title,
-                    categoryName: data.name,
-                    bgColor: data.bgColor,
-                    description: data.description,
-                    icon: data.icon,
-                    amount: item.amount,
-                    id: item.id,
-                  },
-                });
-              }}
-            >
-              <CategoryCard
-                key={index}
-                title={item.title}
-                category={item.category}
-                description={item.category.name}
-                amount={item.amount}
-                isBilled={item.billed}
-              />
-            </Pressable>
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <Heading size="sm" className="text-gray-500 mt-4 mb-2 ml-4">
-              {title.toString()}
-            </Heading>
-          )}
-          contentContainerStyle={{ paddingBottom: 100 }}
-          stickySectionHeadersEnabled={false}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.5}
-        />
+        <TransactionList groupedExpenses={groupedExpensed} />
       ) : (
         // unbilled transaction screen
-        // <FlatList
-        //   className="h-full px-4"
-        //   data={unbilled}
-        //   keyExtractor={(item) => item.id.toString()}
-        //   renderItem={({ item, index }) => (
-        //     <Pressable
-        //       onPress={() => {
-        //         const data: Categories = item.category;
-        //         navigation.navigate("Screens", {
-        //           screen: "ExpenseDetails",
-        //           params: {
-        //             name: item.title,
-        //             categoryName: data.name,
-        //             bgColor: data.bgColor,
-        //             description: data.description,
-        //             icon: data.icon,
-        //             amount: item.amount,
-        //             id: item.id,
-        //           },
-        //         });
-        //       }}
-        //     >
-        //       <CategoryCard
-        //         key={index}
-        //         category={item.category}
-        //         description={item.category.description}
-        //         amount={item.amount}
-        //         isBilled={item.billed}
-        //       />
-        //     </Pressable>
-        //   )}
-        //   contentContainerStyle={{ paddingVertical: 12 }}
-        //   showsVerticalScrollIndicator={false}
-        //   onEndReached={handleLoadMore}
-        //   onEndReachedThreshold={0.5}
-        // />
-        <></>
+        <UnbilledTransactionScreen />
       )}
     </View>
   );

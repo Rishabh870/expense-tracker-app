@@ -44,7 +44,6 @@ export const useExpenseDetailStore = create<ExpenseDetailStore>((set, get) => ({
         "/expense/grouped-by-date"
       );
       set({ groupedExpensed: res.data });
-      console.log(res.data);
     } catch (error) {
       if (error instanceof AxiosError) {
         handleAxiosError(error);

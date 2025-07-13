@@ -45,6 +45,7 @@
     "react-native-css-interop": "^0.1.22",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-gesture-handler": "^2.26.0",
+    "react-native-get-sms-android": "^2.1.0",
     "react-native-immersive": "^2.0.0",
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "^5.5.2",
@@ -54,6 +55,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "^19.1.0",
     "@types/react": "~19.0.10",
     "jscodeshift": "^0.15.2",
     "prettier-plugin-tailwindcss": "^0.5.14",
